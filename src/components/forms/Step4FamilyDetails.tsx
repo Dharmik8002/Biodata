@@ -142,8 +142,10 @@ export const Step4FamilyDetails: React.FC<StepProps> = ({ data, onChange }) => {
         <div>
           <Select
             label="Family Type"
-            value={data.familyType}
-            onChange={(e) => onChange({ familyType: e.target.value as any })}
+            optional
+            placeholder="Select Family Type (Optional)"
+            value={data.familyType || ''}
+            onChange={(e) => onChange({ familyType: (e.target.value || '') as any })}
             options={FAMILY_TYPE_OPTIONS}
           />
         </div>
@@ -153,7 +155,8 @@ export const Step4FamilyDetails: React.FC<StepProps> = ({ data, onChange }) => {
           <Select
             label="Family Status"
             optional
-            value={data.familyStatus || 'Middle Class'}
+            placeholder="Select Family Status (Optional)"
+            value={data.familyStatus || ''}
             onChange={(e) => onChange({ familyStatus: e.target.value })}
             options={[
               'Middle Class',
@@ -180,7 +183,8 @@ export const Step4FamilyDetails: React.FC<StepProps> = ({ data, onChange }) => {
           <Select
             label="Family Values"
             optional
-            value={data.familyValues || 'Moderate'}
+            placeholder="Select Family Values (Optional)"
+            value={data.familyValues || ''}
             onChange={(e) => onChange({ familyValues: e.target.value })}
             options={['Traditional', 'Moderate / Blend', 'Modern / Progressive']}
           />

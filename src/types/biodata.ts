@@ -18,7 +18,7 @@ export type EmploymentType =
   | 'other' 
   | 'prefer_not_to_disclose';
 
-export type FamilyType = 'nuclear' | 'joint' | 'other';
+export type FamilyType = 'nuclear' | 'joint' | 'other' | '';
 
 export type ManglikStatus = 'yes' | 'no' | 'partial' | 'unknown' | 'prefer_not_to_disclose';
 
@@ -90,7 +90,7 @@ export interface BiodataData {
   sistersCount: number;
   brothersDetails?: string;
   sistersDetails?: string;
-  familyType: FamilyType;
+  familyType?: FamilyType;
   familyStatus?: string;
   familyValues?: string;
   familyIntroduction?: string;

@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { BiodataData } from '../../types/biodata';
 import { Button } from '../ui/Button';
-import { exportBiodataToPdf } from '../../lib/pdfExport';
+import { generateBiodataPdf } from '../../lib/pdfGenerator';
 import { exportBiodataToImage } from '../../lib/imageExport';
-import { formatDownloadFilename } from '../../lib/utils';
 import { saveDraftToStorage, clearDraftFromStorage, deleteAllUserData } from '../../lib/storage';
 import {
   Download,
@@ -16,7 +15,9 @@ import {
   CheckCircle,
   AlertCircle,
   Sparkles,
+  Eye,
 } from 'lucide-react';
+import { ExportInspectorModal } from '../ExportInspectorModal';
 
 interface StepProps {
   data: BiodataData;
@@ -27,56 +28,55 @@ interface StepProps {
 
 export const Step10PreviewDownload: React.FC<StepProps> = ({
   data,
-  documentRef,
   onResetData,
 }) => {
   const [isExportingPdf, setIsExportingPdf] = useState(false);
   const [isExportingPng, setIsExportingPng] = useState(false);
   const [isExportingJpeg, setIsExportingJpeg] = useState(false);
+  const [isInspectorOpen, setIsInspectorOpen] = useState(false);
   const [progressStatus, setProgressStatus] = useState<string | null>(null);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
-  const getTargetElement = (): HTMLElement | null => {
-    if (documentRef && documentRef.current) {
-      return documentRef.current;
-    }
-    return document.getElementById('biodata-print-document');
-  };
-
   const handleDownloadPdf = async () => {
-    const el = getTargetElement();
-    if (!el) {
-      setNotification({ type: 'error', message: 'Unable to locate biodata document for capture.' });
+    if (!data.fullName || data.fullName.trim().length < 2) {
+      setNotification({
+        type: 'error',
+        message: 'Please enter a valid Full Name in Step 1 before downloading your biodata.',
+      });
       return;
     }
 
     setIsExportingPdf(true);
-    setProgressStatus('Generating high-resolution print PDF...');
+    setProgressStatus('Generating PDF...');
     setNotification(null);
 
-    const filename = formatDownloadFilename(data.fullName, 'pdf');
-    const success = await exportBiodataToPdf(el, filename, (status) => setProgressStatus(status));
+    const result = await generateBiodataPdf({
+      data,
+      onProgress: (status) => setProgressStatus(status),
+    });
 
     setIsExportingPdf(false);
     setProgressStatus(null);
 
-    if (success) {
+    if (result.success) {
       setNotification({
         type: 'success',
-        message: `Successfully downloaded "${filename}"! Suitable for printing and digital sharing.`,
+        message: `Biodata PDF downloaded successfully as "${result.filename}".`,
       });
     } else {
       setNotification({
         type: 'error',
-        message: 'Failed to generate PDF. Please try again or use the Print button.',
+        message: result.error || 'Unable to generate the PDF. Please try again.',
       });
     }
   };
 
   const handleDownloadImage = async (format: 'png' | 'jpeg') => {
-    const el = getTargetElement();
-    if (!el) {
-      setNotification({ type: 'error', message: 'Unable to locate document for image generation.' });
+    if (!data.fullName || data.fullName.trim().length < 2) {
+      setNotification({
+        type: 'error',
+        message: 'Please enter a valid Full Name in Step 1 before exporting image.',
+      });
       return;
     }
 
@@ -84,21 +84,23 @@ export const Step10PreviewDownload: React.FC<StepProps> = ({
     if (format === 'jpeg') setIsExportingJpeg(true);
     setNotification(null);
 
-    const filename = formatDownloadFilename(data.fullName, format);
-    const success = await exportBiodataToImage(el, filename, format);
+    const result = await exportBiodataToImage({
+      data,
+      format,
+    });
 
     if (format === 'png') setIsExportingPng(false);
     if (format === 'jpeg') setIsExportingJpeg(false);
 
-    if (success) {
+    if (result.success) {
       setNotification({
         type: 'success',
-        message: `Successfully generated "${filename}" for WhatsApp and digital sharing.`,
+        message: `Biodata image downloaded successfully as "${result.filename}".`,
       });
     } else {
       setNotification({
         type: 'error',
-        message: 'Could not export image. Please try again.',
+        message: result.error || 'Could not export image. Please try again.',
       });
     }
   };
@@ -140,6 +142,8 @@ export const Step10PreviewDownload: React.FC<StepProps> = ({
       });
     }
   };
+
+  const isAnyExportRunning = isExportingPdf || isExportingPng || isExportingJpeg;
 
   return (
     <div className="space-y-6 animate-in fade-in-50 duration-200">
@@ -194,11 +198,12 @@ export const Step10PreviewDownload: React.FC<StepProps> = ({
             variant="gold"
             size="lg"
             isLoading={isExportingPdf}
+            disabled={isAnyExportRunning}
             onClick={handleDownloadPdf}
             leftIcon={<Download className="w-4 h-4" />}
             className="w-full sm:w-auto shrink-0 shadow-lg font-bold"
           >
-            Download PDF
+            {isExportingPdf ? 'Generating PDF...' : 'Download PDF'}
           </Button>
         </div>
 
@@ -215,11 +220,12 @@ export const Step10PreviewDownload: React.FC<StepProps> = ({
             variant="outline"
             size="sm"
             isLoading={isExportingPng}
+            disabled={isAnyExportRunning}
             onClick={() => handleDownloadImage('png')}
             className="w-full text-xs"
             leftIcon={<Download className="w-3.5 h-3.5" />}
           >
-            Download as PNG
+            {isExportingPng ? 'Exporting PNG...' : 'Download as PNG'}
           </Button>
         </div>
 
@@ -236,11 +242,12 @@ export const Step10PreviewDownload: React.FC<StepProps> = ({
             variant="outline"
             size="sm"
             isLoading={isExportingJpeg}
+            disabled={isAnyExportRunning}
             onClick={() => handleDownloadImage('jpeg')}
             className="w-full text-xs"
             leftIcon={<Download className="w-3.5 h-3.5" />}
           >
-            Download as JPEG
+            {isExportingJpeg ? 'Exporting JPEG...' : 'Download as JPEG'}
           </Button>
         </div>
 
@@ -311,6 +318,36 @@ export const Step10PreviewDownload: React.FC<StepProps> = ({
           </Button>
         </div>
       </div>
+
+      {/* Dev Quality Inspector Tool (Requirement 16) */}
+      <div className="p-4 bg-slate-100/80 rounded-2xl border border-slate-300 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs shadow-2xs">
+        <div className="space-y-0.5 text-center sm:text-left">
+          <div className="flex items-center justify-center sm:justify-start gap-1.5 font-bold text-slate-800">
+            <Eye className="w-4 h-4 text-amber-600" />
+            <span>Developer Quality Inspector (Requirement 16)</span>
+          </div>
+          <p className="text-[11px] text-slate-500">
+            Inspect fixed 794px export DOM, A4 page margins, and live html2canvas raster output before exporting.
+          </p>
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setIsInspectorOpen(true)}
+          leftIcon={<Eye className="w-3.5 h-3.5" />}
+          className="bg-white border-slate-300 text-slate-700 hover:text-amber-800 shrink-0 shadow-2xs font-medium"
+        >
+          Inspect Export DOM
+        </Button>
+      </div>
+
+      {/* Inspector Modal */}
+      <ExportInspectorModal
+        data={data}
+        isOpen={isInspectorOpen}
+        onClose={() => setIsInspectorOpen(false)}
+      />
     </div>
   );
 };

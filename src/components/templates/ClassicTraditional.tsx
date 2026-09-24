@@ -1,146 +1,242 @@
 import React from 'react';
 import { BiodataData } from '../../types/biodata';
-import { getDocLabels, OmIcon } from './templateUtils';
+import { getDocLabels, OmIcon, FONTS } from './templateUtils';
+import { ExportFieldRow } from './ExportFieldRow';
 
 export const ClassicTraditional: React.FC<{ data: BiodataData }> = ({ data }) => {
   const lbl = getDocLabels(data.language);
+  const primaryColor = '#8B1E0F';
+  const goldColor = '#C59B27';
 
   return (
-    <div className="relative w-full h-full bg-[#FAF6F0] text-amber-950 p-8 sm:p-10 font-marcellus shadow-sm border-[4px] border-[#8B1E0F] box-border">
+    <div
+      className="relative w-full h-full p-8 shadow-sm box-border"
+      style={{
+        backgroundColor: '#FAF6F0',
+        color: '#451a03',
+        border: `4px solid ${primaryColor}`,
+        fontFamily: FONTS.marcellus,
+      }}
+    >
       {/* Auspicious header */}
-      <div className="border-b-2 border-[#8B1E0F] pb-4 mb-6 text-center">
+      <div
+        className="border-b-2 pb-4 mb-6 text-center"
+        style={{ borderColor: primaryColor }}
+        data-pdf-section="header"
+      >
         <div className="flex items-center justify-center gap-3 mb-1">
-          <OmIcon className="w-8 h-8" color="#8B1E0F" />
+          <OmIcon className="w-8 h-8" color={primaryColor} />
         </div>
         {data.religiousHeading && (
-          <p className="text-xs font-semibold text-[#8B1E0F] tracking-widest uppercase mb-1">
+          <p
+            className="text-xs font-semibold tracking-widest uppercase mb-1"
+            style={{ color: primaryColor }}
+          >
             {data.religiousHeading}
           </p>
         )}
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-wider text-[#8B1E0F] uppercase font-cinzel">
+        <h1
+          className="text-2xl font-bold tracking-wider uppercase"
+          style={{ color: primaryColor, fontFamily: FONTS.cinzel }}
+        >
           {data.title || lbl.marriageBiodata}
         </h1>
       </div>
 
       {/* Top Banner with Photo & Core Summary */}
-      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-6 pb-6 border-b border-[#8B1E0F]/30">
+      <div
+        className="flex items-start gap-6 mb-6 pb-6 border-b"
+        style={{ borderColor: `${primaryColor}40` }}
+        data-pdf-section="profile-banner"
+      >
         {data.photoUrl && (
-          <div className="shrink-0 p-1 border-2 border-[#C59B27] bg-white rounded-lg shadow-sm">
+          <div
+            className="shrink-0 p-1 bg-white rounded-lg shadow-sm"
+            style={{ border: `2px solid ${goldColor}` }}
+          >
             <img
               src={data.photoUrl}
               alt={data.fullName}
-              className={`w-28 h-36 object-cover ${
-                data.photoStyle === 'circle' ? 'rounded-full' : 'rounded-md'
-              }`}
+              className="w-28 h-36 object-cover"
+              style={{
+                borderRadius: data.photoStyle === 'circle' ? '9999px' : '6px',
+              }}
             />
           </div>
         )}
 
-        <div className="flex-1 space-y-1.5 text-center sm:text-left">
-          <h2 className="text-2xl font-bold text-[#8B1E0F] font-playfair">{data.fullName}</h2>
+        <div className="flex-1 space-y-1.5 min-w-0">
+          <h2
+            className="text-2xl font-bold"
+            style={{ color: primaryColor, fontFamily: FONTS.playfair }}
+          >
+            {data.fullName}
+          </h2>
           {data.profileHeadline && (
             <p className="text-xs italic text-amber-900/80">"{data.profileHeadline}"</p>
           )}
 
-          <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs pt-2">
-            {data.dateOfBirth && (
-              <div>
-                <span className="font-bold text-[#8B1E0F]">{lbl.dateOfBirth}:</span> {data.dateOfBirth} {data.age > 0 ? `(${data.age} ${lbl.years})` : ''}
-              </div>
-            )}
-            {data.heightFeet && (
-              <div>
-                <span className="font-bold text-[#8B1E0F]">{lbl.height}:</span> {data.heightFeet}
-              </div>
-            )}
-            {data.religion && (
-              <div>
-                <span className="font-bold text-[#8B1E0F]">{lbl.religion}:</span> {data.religion} {data.caste ? `(${data.caste})` : ''}
-              </div>
-            )}
-            {data.motherTongue && (
-              <div>
-                <span className="font-bold text-[#8B1E0F]">{lbl.motherTongue}:</span> {data.motherTongue}
-              </div>
-            )}
-            {data.currentCity && (
-              <div className="col-span-2">
-                <span className="font-bold text-[#8B1E0F]">{lbl.currentLocation}:</span> {[data.currentCity, data.currentState].filter(Boolean).join(', ')}
-              </div>
-            )}
+          <div
+            className="pt-2"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              columnGap: '16px',
+              rowGap: '4px',
+              minWidth: 0,
+            }}
+          >
+            <ExportFieldRow
+              label={lbl.dateOfBirth}
+              value={data.dateOfBirth ? `${data.dateOfBirth} ${data.age > 0 ? `(${data.age} ${lbl.years})` : ''}` : undefined}
+              labelColor={primaryColor}
+            />
+            <ExportFieldRow label={lbl.height} value={data.heightFeet} labelColor={primaryColor} />
+            <ExportFieldRow label={lbl.weight} value={data.weight} labelColor={primaryColor} />
+            <ExportFieldRow label={lbl.bloodGroup} value={data.bloodGroup} labelColor={primaryColor} />
+            <ExportFieldRow label={lbl.complexion} value={data.complexion} labelColor={primaryColor} />
+            <ExportFieldRow
+              label={lbl.maritalStatus}
+              value={data.maritalStatus ? data.maritalStatus.replace('_', ' ') : undefined}
+              labelColor={primaryColor}
+            />
+            <ExportFieldRow
+              label={lbl.religion}
+              value={data.religion ? `${data.religion} ${data.caste ? `(${data.caste})` : ''}` : undefined}
+              labelColor={primaryColor}
+            />
+            <ExportFieldRow label={lbl.subCaste} value={data.subCaste} labelColor={primaryColor} />
+            <ExportFieldRow label={lbl.motherTongue} value={data.motherTongue} labelColor={primaryColor} />
+            <ExportFieldRow
+              label={lbl.diet}
+              value={data.diet && data.diet !== 'prefer_not_to_disclose' ? data.diet.replace('_', ' ') : undefined}
+              labelColor={primaryColor}
+            />
+            <ExportFieldRow label={lbl.nativePlace} value={data.nativePlace} labelColor={primaryColor} />
+            <ExportFieldRow
+              label={lbl.currentLocation}
+              value={[data.currentCity, data.currentState, data.currentCountry].filter(Boolean).join(', ')}
+              labelColor={primaryColor}
+              fullWidth
+            />
           </div>
         </div>
       </div>
 
       {/* Sections */}
-      <div className="space-y-5 text-xs">
+      <div className="space-y-4 text-xs">
         {/* Education & Career */}
-        {(data.highestQualification || data.occupation) && (
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[#8B1E0F] border-b border-[#C59B27] pb-1 mb-2 font-cinzel">
+        {(data.highestQualification || data.occupation || data.jobTitle) && (
+          <div data-pdf-section="education-career">
+            <h3
+              className="text-sm font-bold uppercase tracking-wider mb-2 pb-1 border-b"
+              style={{
+                color: primaryColor,
+                borderColor: `${primaryColor}40`,
+                fontFamily: FONTS.cinzel,
+              }}
+            >
               {lbl.educationCareer}
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5">
-              {data.highestQualification && (
-                <div><span className="font-semibold">{lbl.highestQualification}:</span> {data.highestQualification}</div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                columnGap: '20px',
+                rowGap: '6px',
+                minWidth: 0,
+              }}
+            >
+              <ExportFieldRow label={lbl.highestQualification} value={data.highestQualification} labelColor={primaryColor} />
+              <ExportFieldRow label={lbl.degree} value={data.degree} labelColor={primaryColor} />
+              <ExportFieldRow label={lbl.college} value={data.collegeUniversity} labelColor={primaryColor} />
+              <ExportFieldRow label="Addl. Qualifications" value={data.additionalQualifications} labelColor={primaryColor} />
+              <ExportFieldRow label={lbl.occupation} value={data.occupation} labelColor={primaryColor} />
+              <ExportFieldRow label={lbl.jobTitle} value={data.jobTitle} labelColor={primaryColor} />
+              {!data.hideEmployer && (
+                <ExportFieldRow label={lbl.company} value={data.companyName} labelColor={primaryColor} />
               )}
-              {data.degree && (
-                <div><span className="font-semibold">{lbl.degree}:</span> {data.degree}</div>
+              <ExportFieldRow label="Business" value={data.businessDetails} labelColor={primaryColor} />
+              {!data.hideIncome && (
+                <ExportFieldRow
+                  label={lbl.annualIncome}
+                  value={data.annualIncome ? `${data.incomeCurrency || 'INR'} ${data.annualIncome}` : undefined}
+                  labelColor={primaryColor}
+                />
               )}
-              {data.collegeUniversity && (
-                <div><span className="font-semibold">{lbl.college}:</span> {data.collegeUniversity}</div>
-              )}
-              {data.occupation && (
-                <div><span className="font-semibold">{lbl.occupation}:</span> {data.occupation}</div>
-              )}
-              {data.jobTitle && (
-                <div><span className="font-semibold">{lbl.jobTitle}:</span> {data.jobTitle}</div>
-              )}
-              {!data.hideEmployer && data.companyName && (
-                <div><span className="font-semibold">{lbl.company}:</span> {data.companyName}</div>
-              )}
-              {!data.hideIncome && data.annualIncome && (
-                <div><span className="font-semibold">{lbl.annualIncome}:</span> {data.annualIncome}</div>
-              )}
-              {data.workLocation && (
-                <div><span className="font-semibold">{lbl.workLocation}:</span> {data.workLocation}</div>
-              )}
+              <ExportFieldRow label={lbl.workLocation} value={data.workLocation} labelColor={primaryColor} />
             </div>
           </div>
         )}
 
         {/* Family Details */}
-        {(data.fatherName || data.motherName) && (
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[#8B1E0F] border-b border-[#C59B27] pb-1 mb-2 font-cinzel">
+        {(data.fatherName || data.motherName || data.fatherOccupation || data.motherOccupation || data.brothersCount > 0 || data.sistersCount > 0 || data.brothersDetails || data.sistersDetails || data.familyType || data.familyStatus || data.familyValues || data.familyNativePlace || data.familyResidence || data.familyIntroduction || (data.additionalFamilyMembers && data.additionalFamilyMembers.length > 0)) && (
+          <div data-pdf-section="family-details">
+            <h3
+              className="text-sm font-bold uppercase tracking-wider mb-2 pb-1 border-b"
+              style={{
+                color: primaryColor,
+                borderColor: `${primaryColor}40`,
+                fontFamily: FONTS.cinzel,
+              }}
+            >
               {lbl.familyDetails}
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5">
-              {data.fatherName && (
-                <div><span className="font-semibold">{lbl.fatherName}:</span> {data.fatherName} {data.fatherOccupation ? `(${data.fatherOccupation})` : ''}</div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                columnGap: '20px',
+                rowGap: '6px',
+                minWidth: 0,
+              }}
+            >
+              <ExportFieldRow
+                label={lbl.fatherName}
+                value={data.fatherName ? `${data.fatherName} ${data.fatherOccupation ? `(${data.fatherOccupation})` : ''}` : undefined}
+                labelColor={primaryColor}
+              />
+              <ExportFieldRow
+                label={lbl.motherName}
+                value={data.motherName ? `${data.motherName} ${data.motherOccupation ? `(${data.motherOccupation})` : ''}` : undefined}
+                labelColor={primaryColor}
+              />
+              {(data.brothersCount > 0 || data.brothersDetails) && (
+                <ExportFieldRow
+                  label={lbl.brothers}
+                  value={`${data.brothersCount || 0} ${data.brothersDetails ? `— ${data.brothersDetails}` : ''}`}
+                  labelColor={primaryColor}
+                />
               )}
-              {data.motherName && (
-                <div><span className="font-semibold">{lbl.motherName}:</span> {data.motherName} {data.motherOccupation ? `(${data.motherOccupation})` : ''}</div>
+              {(data.sistersCount > 0 || data.sistersDetails) && (
+                <ExportFieldRow
+                  label={lbl.sisters}
+                  value={`${data.sistersCount || 0} ${data.sistersDetails ? `— ${data.sistersDetails}` : ''}`}
+                  labelColor={primaryColor}
+                />
               )}
-              <div>
-                <span className="font-semibold">{lbl.brothers}:</span> {data.brothersCount} {data.brothersDetails ? `(${data.brothersDetails})` : ''}
-              </div>
-              <div>
-                <span className="font-semibold">{lbl.sisters}:</span> {data.sistersCount} {data.sistersDetails ? `(${data.sistersDetails})` : ''}
-              </div>
-              {data.familyType && (
-                <div><span className="font-semibold">{lbl.familyType}:</span> {data.familyType}</div>
-              )}
-              {data.familyNativePlace && (
-                <div><span className="font-semibold">{lbl.familyNative}:</span> {data.familyNativePlace}</div>
-              )}
+              <ExportFieldRow
+                label={lbl.familyType}
+                value={data.familyType === 'nuclear' ? 'Nuclear' : data.familyType === 'joint' ? 'Joint' : data.familyType ? 'Other' : undefined}
+                labelColor={primaryColor}
+              />
+              <ExportFieldRow label={lbl.familyStatus || 'Family Status'} value={data.familyStatus} labelColor={primaryColor} />
+              <ExportFieldRow label={lbl.familyValues} value={data.familyValues} labelColor={primaryColor} />
+              <ExportFieldRow label={lbl.familyNative} value={data.familyNativePlace} labelColor={primaryColor} />
+              <ExportFieldRow label={lbl.familyResidence} value={data.familyResidence} labelColor={primaryColor} fullWidth />
             </div>
 
+            {data.familyIntroduction && (
+              <p className="mt-2 text-amber-950/90 leading-relaxed italic">
+                "{data.familyIntroduction}"
+              </p>
+            )}
+
             {data.additionalFamilyMembers?.length > 0 && (
-              <div className="mt-2 border-t border-amber-200/60 pt-1.5 space-y-1">
+              <div className="mt-2 border-t border-amber-900/20 pt-1.5 space-y-1">
                 {data.additionalFamilyMembers.map((m) => (
-                  <div key={m.id}>
-                    <span className="font-semibold">{m.relation}:</span> {m.name} {m.details ? `(${m.details})` : ''}
+                  <div key={m.id} className="text-amber-950">
+                    <span className="font-semibold text-[#8B1E0F]">{m.relation}:</span> {m.name} {m.details ? `(${m.details})` : ''}
                   </div>
                 ))}
               </div>
@@ -148,76 +244,176 @@ export const ClassicTraditional: React.FC<{ data: BiodataData }> = ({ data }) =>
           </div>
         )}
 
-        {/* Horoscope */}
+        {/* Horoscope Section (If Enabled) */}
         {data.includeHoroscope && (
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[#8B1E0F] border-b border-[#C59B27] pb-1 mb-2 font-cinzel">
+          <div data-pdf-section="horoscope-details">
+            <h3
+              className="text-sm font-bold uppercase tracking-wider mb-2 pb-1 border-b"
+              style={{
+                color: primaryColor,
+                borderColor: `${primaryColor}40`,
+                fontFamily: FONTS.cinzel,
+              }}
+            >
               {lbl.horoscopeDetails}
             </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5">
-              {data.timeOfBirth && <div><span className="font-semibold">{lbl.timeOfBirth}:</span> {data.timeOfBirth}</div>}
-              {data.placeOfBirth && <div><span className="font-semibold">{lbl.placeOfBirth}:</span> {data.placeOfBirth}</div>}
-              {data.rashi && <div><span className="font-semibold">{lbl.rashi}:</span> {data.rashi}</div>}
-              {data.nakshatra && <div><span className="font-semibold">{lbl.nakshatra}:</span> {data.nakshatra}</div>}
-              {data.gotra && <div><span className="font-semibold">{lbl.gotra}:</span> {data.gotra}</div>}
-              {data.manglikStatus && <div><span className="font-semibold">{lbl.manglik}:</span> {data.manglikStatus}</div>}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                columnGap: '20px',
+                rowGap: '6px',
+                minWidth: 0,
+              }}
+            >
+              <ExportFieldRow label={lbl.timeOfBirth} value={data.timeOfBirth} labelColor={primaryColor} />
+              <ExportFieldRow label={lbl.placeOfBirth} value={data.placeOfBirth} labelColor={primaryColor} />
+              <ExportFieldRow label={lbl.rashi} value={data.rashi} labelColor={primaryColor} />
+              <ExportFieldRow label={lbl.nakshatra} value={data.nakshatra} labelColor={primaryColor} />
+              <ExportFieldRow label={lbl.gotra} value={data.gotra} labelColor={primaryColor} />
+              <ExportFieldRow
+                label={lbl.manglik}
+                value={
+                  data.manglikStatus === 'no'
+                    ? 'Non-Manglik'
+                    : data.manglikStatus === 'yes'
+                    ? 'Manglik'
+                    : data.manglikStatus === 'partial'
+                    ? 'Anshik / Partial'
+                    : undefined
+                }
+                labelColor={primaryColor}
+              />
+              <ExportFieldRow label={lbl.kundaliNotes} value={data.horoscopeNotes} labelColor={primaryColor} fullWidth />
             </div>
           </div>
         )}
 
-        {/* About Me */}
-        {data.aboutMe && (
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[#8B1E0F] border-b border-[#C59B27] pb-1 mb-2 font-cinzel">
+        {/* About Me & Lifestyle */}
+        {(data.aboutMe || (data.hobbies && data.hobbies.length > 0) || data.personality || data.lifestyle || (data.languagesKnown && data.languagesKnown.length > 0)) && (
+          <div data-pdf-section="about-me">
+            <h3
+              className="text-sm font-bold uppercase tracking-wider mb-2 pb-1 border-b"
+              style={{
+                color: primaryColor,
+                borderColor: `${primaryColor}40`,
+                fontFamily: FONTS.cinzel,
+              }}
+            >
               {lbl.aboutMe}
             </h3>
-            <p className="leading-relaxed whitespace-pre-line">{data.aboutMe}</p>
-          </div>
-        )}
-
-        {/* Partner Preferences */}
-        {data.includePartnerPreferences && (
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[#8B1E0F] border-b border-[#C59B27] pb-1 mb-2 font-cinzel">
-              {lbl.partnerPreferences}
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5">
-              {(data.partnerAgeMin || data.partnerAgeMax) && (
-                <div><span className="font-semibold">{lbl.prefAge}:</span> {data.partnerAgeMin} - {data.partnerAgeMax} {lbl.years}</div>
+            {data.aboutMe && (
+              <p className="text-amber-950 leading-relaxed whitespace-pre-line mb-2">
+                {data.aboutMe}
+              </p>
+            )}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                columnGap: '20px',
+                rowGap: '6px',
+                minWidth: 0,
+              }}
+            >
+              <ExportFieldRow label="Personality" value={data.personality} labelColor={primaryColor} />
+              <ExportFieldRow label="Lifestyle" value={data.lifestyle} labelColor={primaryColor} />
+              {data.hobbies && data.hobbies.length > 0 && (
+                <ExportFieldRow label={lbl.hobbies} value={data.hobbies.join(', ')} labelColor={primaryColor} fullWidth />
               )}
-              {data.partnerHeightRange && (
-                <div><span className="font-semibold">{lbl.prefHeight}:</span> {data.partnerHeightRange}</div>
-              )}
-              {data.partnerEducation && (
-                <div><span className="font-semibold">{lbl.prefEducation}:</span> {data.partnerEducation}</div>
-              )}
-              {data.partnerLocation && (
-                <div><span className="font-semibold">{lbl.prefLocation}:</span> {data.partnerLocation}</div>
+              {data.languagesKnown && data.languagesKnown.length > 0 && (
+                <ExportFieldRow label={lbl.languagesKnown} value={data.languagesKnown.join(', ')} labelColor={primaryColor} fullWidth />
               )}
             </div>
           </div>
         )}
 
-        {/* Contact */}
-        <div>
-          <h3 className="text-sm font-bold uppercase tracking-wider text-[#8B1E0F] border-b border-[#C59B27] pb-1 mb-2 font-cinzel">
-            {lbl.contactDetails}
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5">
-            {data.contactPersonName && (
-              <div><span className="font-semibold">{lbl.contactPerson}:</span> {data.contactPersonName} {data.relationship ? `(${data.relationship})` : ''}</div>
-            )}
-            {data.showPhone && data.primaryPhone && (
-              <div><span className="font-semibold">{lbl.phone}:</span> {data.primaryPhone}</div>
-            )}
-            {data.showEmail && data.email && (
-              <div><span className="font-semibold">{lbl.email}:</span> {data.email}</div>
-            )}
-            {data.showAddress && data.residentialAddress && (
-              <div className="col-span-2"><span className="font-semibold">{lbl.address}:</span> {data.residentialAddress}</div>
+        {/* Partner Preferences (If Enabled) */}
+        {data.includePartnerPreferences && (
+          <div data-pdf-section="partner-preferences">
+            <h3
+              className="text-sm font-bold uppercase tracking-wider mb-2 pb-1 border-b"
+              style={{
+                color: primaryColor,
+                borderColor: `${primaryColor}40`,
+                fontFamily: FONTS.cinzel,
+              }}
+            >
+              {lbl.partnerPreferences}
+            </h3>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                columnGap: '20px',
+                rowGap: '6px',
+                minWidth: 0,
+              }}
+            >
+              {(data.partnerAgeMin || data.partnerAgeMax) && (
+                <ExportFieldRow
+                  label={lbl.prefAge}
+                  value={`${data.partnerAgeMin || 18} - ${data.partnerAgeMax || 40} ${lbl.years}`}
+                  labelColor={primaryColor}
+                />
+              )}
+              <ExportFieldRow label={lbl.prefHeight} value={data.partnerHeightRange} labelColor={primaryColor} />
+              <ExportFieldRow label={lbl.prefEducation} value={data.partnerEducation} labelColor={primaryColor} />
+              <ExportFieldRow label={lbl.prefProfession} value={data.partnerProfession} labelColor={primaryColor} />
+              <ExportFieldRow label={lbl.prefLocation} value={data.partnerLocation} labelColor={primaryColor} />
+              <ExportFieldRow label="Mother Tongue" value={data.partnerMotherTongue} labelColor={primaryColor} />
+              <ExportFieldRow label="Community" value={data.partnerCommunity} labelColor={primaryColor} />
+              <ExportFieldRow label="Diet" value={data.partnerDiet} labelColor={primaryColor} />
+            </div>
+            {data.partnerExpectations && (
+              <p className="mt-2 text-amber-950/90 italic">"{data.partnerExpectations}"</p>
             )}
           </div>
-        </div>
+        )}
+
+        {/* Contact Details (With Visibility Controls) */}
+        {(data.contactPersonName || (data.showPhone && data.primaryPhone) || (data.showEmail && data.email) || (data.showAddress && data.residentialAddress)) && (
+          <div data-pdf-section="contact-details">
+            <h3
+              className="text-sm font-bold uppercase tracking-wider mb-2 pb-1 border-b"
+              style={{
+                color: primaryColor,
+                borderColor: `${primaryColor}40`,
+                fontFamily: FONTS.cinzel,
+              }}
+            >
+              {lbl.contactDetails}
+            </h3>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                columnGap: '20px',
+                rowGap: '6px',
+                minWidth: 0,
+              }}
+            >
+              <ExportFieldRow
+                label={lbl.contactPerson}
+                value={data.contactPersonName ? `${data.contactPersonName} ${data.relationship ? `(${data.relationship})` : ''}` : undefined}
+                labelColor={primaryColor}
+              />
+              {data.showPhone && data.primaryPhone && (
+                <ExportFieldRow
+                  label={lbl.phone}
+                  value={`${data.primaryPhone} ${data.alternatePhone ? `/ ${data.alternatePhone}` : ''}`}
+                  labelColor={primaryColor}
+                />
+              )}
+              {data.showEmail && data.email && (
+                <ExportFieldRow label={lbl.email} value={data.email} labelColor={primaryColor} />
+              )}
+              {data.showAddress && data.residentialAddress && (
+                <ExportFieldRow label={lbl.address} value={data.residentialAddress} labelColor={primaryColor} fullWidth />
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

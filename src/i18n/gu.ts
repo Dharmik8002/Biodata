@@ -100,6 +100,7 @@ export const gu = {
     brothers: 'ભાઈઓ',
     sisters: 'બહેનો',
     familyType: 'પરિવારનો પ્રકાર',
+    familyStatus: 'પરિવારની સ્થિતિ',
     familyValues: 'પારિવારિક મૂલ્યો',
     familyResidence: 'પરિવારનું સરનામું',
     familyNative: 'મૂળ વતન',

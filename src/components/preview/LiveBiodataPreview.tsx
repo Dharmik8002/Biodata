@@ -3,7 +3,9 @@ import { BiodataData } from '../../types/biodata';
 import { BiodataDocument } from './BiodataDocument';
 import { ZoomControls } from './ZoomControls';
 import { TEMPLATES } from '../../data/templates';
-import { Palette, Eye } from 'lucide-react';
+import { Palette, Eye, Download } from 'lucide-react';
+import { Button } from '../ui/Button';
+import { generateBiodataPdf } from '../../lib/pdfGenerator';
 
 interface LiveBiodataPreviewProps {
   data: BiodataData;
@@ -21,6 +23,20 @@ export const LiveBiodataPreview: React.FC<LiveBiodataPreviewProps> = ({
   const docRef = externalDocRef || localDocRef;
 
   const [zoom, setZoom] = useState<number>(0.65);
+  const [isDownloading, setIsDownloading] = useState<boolean>(false);
+
+  const handleQuickDownload = async () => {
+    if (!data.fullName || data.fullName.trim().length < 2) {
+      alert('Please enter a valid full name before downloading your biodata.');
+      return;
+    }
+    setIsDownloading(true);
+    try {
+      await generateBiodataPdf({ data });
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   // Auto calculate fit to container width on mount or resize
   const calculateFit = () => {
@@ -48,13 +64,27 @@ export const LiveBiodataPreview: React.FC<LiveBiodataPreviewProps> = ({
           </span>
         </div>
 
-        {/* Zoom Controls */}
-        <ZoomControls
-          zoom={zoom}
-          onZoomChange={setZoom}
-          onFitToWidth={calculateFit}
-          onReset={() => setZoom(1.0)}
-        />
+        <div className="flex items-center gap-2">
+          {/* Zoom Controls */}
+          <ZoomControls
+            zoom={zoom}
+            onZoomChange={setZoom}
+            onFitToWidth={calculateFit}
+            onReset={() => setZoom(1.0)}
+          />
+
+          {/* Quick PDF Download Button */}
+          <Button
+            variant="gold"
+            size="sm"
+            isLoading={isDownloading}
+            onClick={handleQuickDownload}
+            leftIcon={<Download className="w-3.5 h-3.5" />}
+            className="text-xs font-bold shadow-xs shrink-0 cursor-pointer"
+          >
+            Download PDF
+          </Button>
+        </div>
       </div>
 
       {/* Quick Template Switcher Strip */}

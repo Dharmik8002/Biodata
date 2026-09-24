@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { BiodataData } from '../types/biodata';
 import { BiodataWizard } from '../components/forms/BiodataWizard';
 import { LiveBiodataPreview } from '../components/preview/LiveBiodataPreview';
-import { SAMPLE_BIODATA, INITIAL_EMPTY_BIODATA } from '../data/sampleData';
+import { SAMPLE_BIODATA, DHARMIK_MODI_BIODATA, INITIAL_EMPTY_BIODATA } from '../data/sampleData';
 import { getDraftFromStorage, hasSavedDraft } from '../lib/storage';
 import { Modal } from '../components/ui/Modal';
 import { Button } from '../components/ui/Button';
@@ -38,8 +38,8 @@ export const BuilderPage: React.FC<BuilderPageProps> = ({
   };
 
   const handleLoadSample = () => {
-    if (window.confirm('Load sample biodata profile? This will populate the form with realistic sample information.')) {
-      onBiodataChange({ ...SAMPLE_BIODATA, templateId: biodata.templateId });
+    if (window.confirm('Load sample biodata profile (Dharmik Modi)? This will populate the form with realistic Gujarati / English sample data.')) {
+      onBiodataChange({ ...DHARMIK_MODI_BIODATA, templateId: biodata.templateId });
     }
   };
 

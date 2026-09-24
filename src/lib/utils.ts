@@ -6,11 +6,15 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatDownloadFilename(fullName?: string, ext: 'pdf' | 'png' | 'jpeg' = 'pdf'): string {
-  const cleanName = (fullName || 'Indian')
+  const sanitized = (fullName || '')
     .trim()
     .replace(/[^a-zA-Z0-9\s]/g, '')
     .replace(/\s+/g, '_');
-  return `${cleanName}_Marriage_Biodata.${ext}`;
+
+  if (!sanitized) {
+    return `Marriage_Biodata.${ext}`;
+  }
+  return `${sanitized}_Marriage_Biodata.${ext}`;
 }
 
 export function calculateAge(dateOfBirth: string): number {

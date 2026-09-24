@@ -100,6 +100,7 @@ export const hi = {
     brothers: 'भाई',
     sisters: 'बहनें',
     familyType: 'परिवार का प्रकार',
+    familyStatus: 'परिवार की स्थिति',
     familyValues: 'पारिवारिक मूल्य',
     familyResidence: 'पारिवारिक निवास',
     familyNative: 'मूल गांव / शहर',

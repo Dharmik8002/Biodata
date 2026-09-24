@@ -13,6 +13,7 @@ export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElemen
   error?: string;
   helperText?: string;
   optional?: boolean;
+  placeholder?: string;
 }
 
 export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
@@ -24,12 +25,17 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       error,
       helperText,
       optional,
+      placeholder,
       id,
       ...props
     },
     ref
   ) => {
     const selectId = id || (label ? label.toLowerCase().replace(/\s+/g, '-') : undefined);
+
+    const hasEmptyOption = options.some(
+      (opt) => (typeof opt === 'string' && opt === '') || (typeof opt === 'object' && opt.value === '')
+    );
 
     return (
       <div className="w-full text-left space-y-1.5">
@@ -54,8 +60,12 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
               error && 'border-red-500 focus:border-red-500 focus:ring-red-500/20',
               className
             )}
+            value={props.value ?? ''}
             {...props}
           >
+            {(placeholder || (optional && !hasEmptyOption)) && (
+              <option value="">{placeholder || 'Select (Optional)'}</option>
+            )}
             {options.map((opt) => {
               if (typeof opt === 'string') {
                 return (
@@ -63,6 +73,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                     {opt}
                   </option>
                 );
+              }
+              if (opt.value === '' && (placeholder || optional)) {
+                return null;
               }
               return (
                 <option key={opt.value} value={opt.value}>

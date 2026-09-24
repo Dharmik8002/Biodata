@@ -186,3 +186,37 @@ export const GoldDivider: React.FC<{ color?: string }> = ({ color = '#D4AF37' })
     <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent" />
   </div>
 );
+
+export function getTemplateFonts(lang: LanguageCode = 'en') {
+  if (lang === 'gu') {
+    return {
+      cinzel: "'Cinzel', 'Noto Sans Gujarati', 'Noto Sans Devanagari', Georgia, serif",
+      playfair: "'Playfair Display', 'Noto Sans Gujarati', 'Noto Sans Devanagari', Georgia, serif",
+      marcellus: "'Marcellus', 'Noto Sans Gujarati', 'Noto Sans Devanagari', Georgia, serif",
+      sans: "'Noto Sans Gujarati', 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+    };
+  }
+  if (lang === 'hi') {
+    return {
+      cinzel: "'Cinzel', 'Noto Sans Devanagari', 'Noto Sans Gujarati', Georgia, serif",
+      playfair: "'Playfair Display', 'Noto Sans Devanagari', 'Noto Sans Gujarati', Georgia, serif",
+      marcellus: "'Marcellus', 'Noto Sans Devanagari', 'Noto Sans Gujarati', Georgia, serif",
+      sans: "'Noto Sans Devanagari', 'Inter', 'Noto Sans Gujarati', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+    };
+  }
+  return {
+    cinzel: "'Cinzel', 'Noto Sans Devanagari', 'Noto Sans Gujarati', Georgia, serif",
+    playfair: "'Playfair Display', 'Noto Sans Devanagari', 'Noto Sans Gujarati', Georgia, serif",
+    marcellus: "'Marcellus', 'Noto Sans Devanagari', 'Noto Sans Gujarati', Georgia, serif",
+    sans: "'Inter', 'Noto Sans Devanagari', 'Noto Sans Gujarati', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+  };
+}
+
+export const FONTS = {
+  cinzel: "'Cinzel', 'Noto Sans Gujarati', 'Noto Sans Devanagari', Georgia, serif",
+  playfair: "'Playfair Display', 'Noto Sans Gujarati', 'Noto Sans Devanagari', Georgia, serif",
+  marcellus: "'Marcellus', 'Noto Sans Gujarati', 'Noto Sans Devanagari', Georgia, serif",
+  sans: "'Noto Sans Gujarati', 'Noto Sans Devanagari', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+};
+
+

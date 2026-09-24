@@ -100,6 +100,7 @@ export const en = {
     brothers: 'Brothers',
     sisters: 'Sisters',
     familyType: 'Family Type',
+    familyStatus: 'Family Status',
     familyValues: 'Family Values',
     familyResidence: 'Family Residence',
     familyNative: 'Family Native',
